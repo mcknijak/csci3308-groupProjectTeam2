@@ -3,7 +3,7 @@
 #### For those who communicate through several different chat platforms who want to be able to access all their conversation from one place. ThreadBlend is a unified messaging app that. Our product provides additional functionality by interfacing with prodictivity tools as well - all from the same app.
 
 
-## Contributors
+## Contributors/Members of Team 02
 |Name|Email|GitHub Username|
 |----|-----|---------------|
 |Aaron Semones | aaron.semones@colorado.edu | asemones|
