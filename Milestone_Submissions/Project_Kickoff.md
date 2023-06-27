@@ -20,6 +20,7 @@
 7. Version Control Set-Up:
    - [ Click Here to see ](https://github.com/mcknijak/csci3308-groupProjectTeam2)
 8. Development Methodologies:
+   - [Project Board ](https://github.com/users/mcknijak/projects/2)
 9. Communication Plan:
     - Discord server to discuss progress about the project 
 10. Meeting Plan
