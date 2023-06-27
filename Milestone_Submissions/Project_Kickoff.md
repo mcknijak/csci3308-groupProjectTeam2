@@ -26,6 +26,6 @@
 10. Meeting Plan
     -TA meeting is over zoom at 6:30 on wednesdays and team meetings will be after class on Tuesday and Thursday for however much time is needed
 11. Use Case Diagram
-   - See use case diagram.png file: [Use_Case_Diagram](https://github.com/mcknijak/csci3308-groupProjectTeam2/blob/main/Use%20case%20diagram.png)
+    - See use case diagram.png file: [Use_Case_Diagram](https://github.com/mcknijak/csci3308-groupProjectTeam2/blob/main/Use%20case%20diagram.png)
 12. Wireframes
     -Click to see wireframes folder: [Wireframes](https://github.com/mcknijak/csci3308-groupProjectTeam2/tree/main/Wireframe%20pngs)
