@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="/Lab Website/resources/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+
+    <script>
+        function ValidateEmail(input) {
+            var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+            if (input.value.match(validRegex)) {
+                alert("Valid email address!");
+                document.form1.text1.focus();
+                return true;
+
+            } else {
+                alert("Invalid email address!");
+                document.form1.text1.focus();
+                return false;
+            }
+        }
+    </script>
+</head>
+
+<body onload="document.form1.text1.focus()">
+    <div class="mail">
+        <h2>Input an email address</h2>
+        <form name="form1" action="#">
+            <input type="text" name="email" />
+            <div class="validate">
+                <input type="submit" name="validate" value="Submit" pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"onclick="ValidateEmail(document.form1.email)">
+            </div>
+        </form>
+    </div>
+
+    <script src="email.js"></script>
+
+</body>
+
+
+
+</html>
