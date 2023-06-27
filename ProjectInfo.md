@@ -19,7 +19,8 @@
    - For those who communicate through several different chat platforms who want to be able to access all their conversation from one place. ThreadBlend is a unified messaging app that. Our product provides additional functionality by interfacing with prodictivity tools as well - all from the same app.
 7. Version Control Set-Up [ X ]
 8. Development Methodologies:
-9.  Communication Plan:
+9. Communication Plan:
+    - Discord server to discuss progress about the project 
 10. Meeting Plan
 11. Use Case Diagram
 12. Wireframes
