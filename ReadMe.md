@@ -8,7 +8,7 @@
 |----|-----|---------------|
 |Aaron Semones | aaron.semones@colorado.edu | asemones|
 | Adam Wuth | adwu8800@colorado.edu | Adam-Wuth|
-| Henry Radovih | hera4466@colorado.edu | hradovich|
+| Henry Radovich | hera4466@colorado.edu | hradovich|
 | Jake McKnight | jamc8538@colorado.edu | mcknijak | 
 
 ## Technology Stack:
