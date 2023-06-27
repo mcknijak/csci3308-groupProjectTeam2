@@ -28,4 +28,4 @@
 11. Use Case Diagram
     - See use case diagram.png file: [Use_Case_Diagram](https://github.com/mcknijak/csci3308-groupProjectTeam2/blob/main/Use%20case%20diagram.png)
 12. Wireframes
-    - [Wireframes](https://github.com/mcknijak/csci3308-groupProjectTeam2/tree/main/Wireframe%20pngs)
+    - [Wireframes folder](https://github.com/mcknijak/csci3308-groupProjectTeam2/tree/main/Wireframe%20pngs)
