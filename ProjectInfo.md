@@ -25,4 +25,4 @@
     -TA meeting is over zoom at 6:30 on wednesdays and team meetings will be after class on Tuesday and Thursday for however much time is needed
 11. Use Case Diagram
 12. Wireframes
-    -
+    -Click to see wireframes folder: [Wireframes]([https://pages.github.com/](https://github.com/mcknijak/csci3308-groupProjectTeam2/tree/main/Wireframe%20pngs)https://github.com/mcknijak/csci3308-groupProjectTeam2/tree/main/Wireframe%20pngs)
