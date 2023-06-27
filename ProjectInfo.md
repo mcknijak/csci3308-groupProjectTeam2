@@ -24,4 +24,5 @@
 10. Meeting Plan
     -TA meeting is over zoom at 6:30 on wednesdays and team meetings will be after class on Tuesday and Thursday for however much time is needed
 11. Use Case Diagram
-11. Wireframes
+12. Wireframes
+    -
