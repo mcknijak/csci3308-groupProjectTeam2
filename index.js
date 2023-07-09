@@ -46,8 +46,47 @@ app.get("/login", (req, res) => {
   res.render("pages/login");
 });
 
+// Login submission
+app.post("/login", (req, res) => {
+  //initializing vars
+  email = req.body.email;
 
+  const query = "select * from User where email = $1";
+  const values = [email];
 
+  // get the student_id based on the emailid
+  db.one(query, values)
+    .then((data) => {
+      user.User_id = data.User_id;
+      user.Username = username;
+      user.First_name = data.First_name;
+      user.Last_name = data.Last_name;
+      user.Email = data.Email;
+      
+      req.session.user = user;
+      req.session.save();
+
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect("/login");
+    });
+});
+
+// Making sure the user logs in
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+  next();
+};
+app.use(auth);
+
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.render("pages/logout");
+});
 
 //This goes bottom
 app.listen(4000, () => {
