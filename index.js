@@ -62,7 +62,7 @@ app.post("/login", (req, res) => {
       user.First_name = data.First_name;
       user.Last_name = data.Last_name;
       user.Email = data.Email;
-      
+
       req.session.user = user;
       req.session.save();
 
@@ -82,6 +82,10 @@ const auth = (req, res, next) => {
   next();
 };
 app.use(auth);
+
+app.get("/l", (req, res) => {
+  res.render("pages/home");
+});
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
