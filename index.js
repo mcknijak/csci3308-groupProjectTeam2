@@ -35,10 +35,15 @@ app.use(bodyParser.json());
 
 //Set user vars
 const user = {
-  username: undefined,
-  first_name: undefined,
-  last_name: undefined,
-  email: undefined,
+  User_id: undefined,
+  First_name: undefined,
+  Last_name: undefined,
+  City: undefined,
+  State: undefined,
+  Country: undefined,
+  Email: undefined,
+  Username: undefined,
+  Password: undefined,
 };
 
 app.get('/', (req, res) => {
@@ -92,7 +97,7 @@ app.post("/login", (req, res) => {
 
 app.post('/user/create_account', (req,res) => {
   const query = 
-    'INSERT INTO User (User_id, First_name, Last_name, City, State, Country, Email, Username, Password, UserIcon) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING * ;';
+    'INSERT INTO User (User_id, First_name, Last_name, City, State, Country, Email, Username, Password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING * ;';
   const User_id = req.body.User_id;
   const First_name = req.body.First_name;
   const Last_name = req.body.Last_name;
