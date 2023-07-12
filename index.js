@@ -50,15 +50,14 @@ const user = {
 
 app.get('/', (req, res) => {
   res.render("pages/home", {
-    User_id: req.session.user.User_id,
-    First_name: req.session.user.First_name,
-    Last_name: req.session.user.Last_name,
-    City: req.session.user.City,
-    State: req.session.user.State,
-    Country: req.session.user.Country,
-    Email: req.session.user.Email,
-    Username: req.session.user.Username,
-    Password: req.session.user.Password,
+    First_name: req.First_name,
+    Last_name: req.Last_name,
+    City: req.City,
+    State: req.State,
+    Country: req.Country,
+    Email: req.Email,
+    Username: req.Username,
+    Password: req.Password,
   });
 });
 
@@ -70,7 +69,7 @@ app.get("/login", (req, res) => {
 // Login submission
 app.post("/login", (req, res) => {
   //initializing vars
-  email = req.body.email;
+  const email = req.body.email;
 
   const query = "select * from User where email = $1";
   const values = [email];
@@ -78,11 +77,17 @@ app.post("/login", (req, res) => {
   // get the student_id based on the emailid
   db.one(query, values)
     .then((data) => {
-      user.User_id = data.User_id;
-      user.Username = username;
-      user.First_name = data.First_name;
-      user.Last_name = data.Last_name;
-      user.Email = data.Email;
+      const user = {
+        User_id: data.User_id,
+        First_name: data.First_name,
+        Last_name: data.Last_name,
+        City: data.City,
+        State: data.State,
+        Country: data.Country,
+        Email: data.Email,
+        Username: data.Username,
+        Password: data.Password,
+      };
 
       req.session.user = user;
       req.session.save();
@@ -94,8 +99,6 @@ app.post("/login", (req, res) => {
       res.redirect("/login");
     });
 });
-
-
 
 app.post('/user/create_account', (req,res) => {
   const query = 
@@ -121,14 +124,14 @@ app.post('/user/create_account', (req,res) => {
     Username,
     Password,
   ])
-  .then(function (data) {
-    req.session.save();
-    res.redirect('/login');
-  })
+  // .then(function (data) {
+  //   req.session.save();
+  //   res.redirect('/login');
+  // })
   .then(function (data) {
     res.status(201).json({
       status: 'success',
-      data: data,
+      // data: data,
       message: 'data added successfully',
     });
   })
@@ -145,10 +148,6 @@ const auth = (req, res, next) => {
   next();
 };
 app.use(auth);
-
-app.get("/", (req, res) => {
-  res.render("pages/home");
-});
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
