@@ -4,6 +4,7 @@ services:
     image: node:lts
     user: node
     working_dir: /home/node/app
+    env_file: .env
     environment:
       - NODE_ENV=development
     ports:
