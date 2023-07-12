@@ -48,7 +48,6 @@ const user = {
   Password: undefined,
 };
 
-<<<<<<< HEAD
 app.get('/', (req, res) => {
   res.render("pages/home", {
     User_id: req.session.user.User_id,
@@ -62,9 +61,6 @@ app.get('/', (req, res) => {
     Password: req.session.user.Password,
   });
 });
-=======
-app.set('views','./All_project_code_components/views');
->>>>>>> refs/remotes/origin/main
 
 //Login page
 app.get("/login", (req, res) => {
