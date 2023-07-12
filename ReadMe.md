@@ -27,7 +27,7 @@ Installation of Node, Azure, and PostGres. [More to come]
 [Under Development]
 
 ## How to Run the Tests
-[Under Development - will likely use Mocha as a framework]
+[Under Development - will likely use Chai/Mocha as a framework]
 
 ## Link to Deployed Application 
 [Under Development]
