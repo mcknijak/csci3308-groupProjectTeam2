@@ -1,15 +1,10 @@
-
-const express = require('express');
-const bodyParser = require('body-parser');
-const pgp = require('pg-promise')();
-require('dotenv').config();
-
-// defining the Express app
+const express = require("express");
 const app = express();
-// using bodyParser to parse JSON in the request body into JS objects
-app.use(bodyParser.json());
+const pgp = require("pg-promise")();
+const bodyParser = require("body-parser");
 const session = require("express-session");
-// Database connection details
+
+// db config
 const dbConfig = {
   host: process.env.POSTGRES_HOST,
   port: 5432,
@@ -18,8 +13,11 @@ const dbConfig = {
   password: process.env.POSTGRES_PASSWORD,
   ssl: true
 };
-// Connect to database using the above details
+
 const db = pgp(dbConfig);
+
+app.set("view engine", "ejs");
+app.use(bodyParser.json());
 
 // set session
 app.use(
@@ -29,9 +27,13 @@ app.use(
     resave: true,
   })
 );
-//view engine
-app.set("view engine", "ejs");
-app.use(bodyParser.json());
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+
 
 //Set user vars
 const user = {
@@ -40,6 +42,8 @@ const user = {
   last_name: undefined,
   email: undefined,
 };
+
+app.set('views','./All_project_code_components/views');
 
 //Login page
 app.get("/login", (req, res) => {
@@ -83,7 +87,7 @@ const auth = (req, res, next) => {
 };
 app.use(auth);
 
-app.get("/l", (req, res) => {
+app.get("/", (req, res) => {
   res.render("pages/home");
 });
 
