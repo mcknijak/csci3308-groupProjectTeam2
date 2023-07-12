@@ -37,10 +37,15 @@ app.use(
 
 //Set user vars
 const user = {
-  username: undefined,
-  first_name: undefined,
-  last_name: undefined,
-  email: undefined,
+  User_id: undefined,
+  First_name: undefined,
+  Last_name: undefined,
+  City: undefined,
+  State: undefined,
+  Country: undefined,
+  Email: undefined,
+  Username: undefined,
+  Password: undefined,
 };
 
 app.get('/', (req, res) => {
