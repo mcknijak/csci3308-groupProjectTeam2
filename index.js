@@ -41,6 +41,20 @@ const user = {
   email: undefined,
 };
 
+app.get('/', (req, res) => {
+  res.render("pages/home", {
+    User_id: req.session.user.User_id,
+    First_name: req.session.user.First_name,
+    Last_name: req.session.user.Last_name,
+    City: req.session.user.City,
+    State: req.session.user.State,
+    Country: req.session.user.Country,
+    Email: req.session.user.Email,
+    Username: req.session.user.Username,
+    Password: req.session.user.Password,
+  });
+});
+
 //Login page
 app.get("/login", (req, res) => {
   res.render("pages/login");
@@ -72,6 +86,48 @@ app.post("/login", (req, res) => {
       console.log(err);
       res.redirect("/login");
     });
+});
+
+
+
+app.post('/user/create_account', (req,res) => {
+  const query = 
+    'INSERT INTO User (User_id, First_name, Last_name, City, State, Country, Email, Username, Password, UserIcon) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING * ;';
+  const User_id = req.body.User_id;
+  const First_name = req.body.First_name;
+  const Last_name = req.body.Last_name;
+  const City = req.body.City;
+  const State = req.body.State;
+  const Country = req.body.Country;
+  const Email = req.body.Email;
+  const Username = req.body.Username;
+  const Password = req.body.Password;
+
+  db.any(query, [
+    User_id,
+    First_name,
+    Last_name,
+    City, 
+    State,
+    Country,
+    Email,
+    Username,
+    Password,
+  ])
+  .then(function (data) {
+    req.session.save();
+    res.redirect('/login');
+  })
+  .then(function (data) {
+    res.status(201).json({
+      status: 'success',
+      data: data,
+      message: 'data added successfully',
+    });
+  })
+  .catch(function (err) {
+    return console.log(err);
+  });
 });
 
 // Making sure the user logs in
