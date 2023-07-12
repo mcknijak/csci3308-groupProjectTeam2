@@ -37,15 +37,10 @@ app.use(
 
 //Set user vars
 const user = {
-  User_id: undefined,
-  First_name: undefined,
-  Last_name: undefined,
-  City: undefined,
-  State: undefined,
-  Country: undefined,
-  Email: undefined,
-  Username: undefined,
-  Password: undefined,
+  username: undefined,
+  first_name: undefined,
+  last_name: undefined,
+  email: undefined,
 };
 
 app.get('/', (req, res) => {
@@ -60,12 +55,30 @@ app.get('/', (req, res) => {
     Password: req.Password,
   });
 });
+app.set('views','./All_project_code_components/views');
 
 //Login page
 app.get("/login", (req, res) => {
   res.render("pages/login");
 });
 
+
+//Data base structure:
+//"User_id" serial NOT NULL,
+// "First_name" character varying(30) NOT NULL,
+// "Last_name" character varying(30) NOT NULL,
+// "City" character varying(50) NOT NULL,
+// "State" character varying(30),
+// "Country" character varying(30) NOT NULL,
+// "Email" character varying(320) NOT NULL,
+// "Username" character varying(30) NOT NULL,
+// "Password" character varying(100),
+// "UserIcon" character,
+// PRIMARY KEY ("User_id")
+
+//Insert statment to check that you can log in
+//insert into User (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
+//insert into user (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
 // Login submission
 app.post("/login", (req, res) => {
   //initializing vars
