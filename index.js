@@ -49,43 +49,27 @@ app.use(
 //   Password: undefined,
 // };
 
-app.get('/', (req, res) => {
-  res.render("pages/home", {
-    First_name: req.First_name,
-    Last_name: req.Last_name,
-    City: req.City,
-    State: req.State,
-    Country: req.Country,
-    Email: req.Email,
-    Username: req.Username,
-    Password: req.Password,
-  });
-});
 app.set('views','./All_project_code_components/views');
-
+//
+app.get('/', (req, res) => {
+  // if(!req.session.user){
+  //   res.redirect('/login');//redirect to 
+  // }else{
+    res.render("pages/home")
+  //}
+});
 //Login page
 app.get("/login", (req, res) => {
   res.render("pages/login");
 });
 
+app.get("/sign-up", (req, res) => {//sign up page
+  res.render("pages/signup");
+});
 
-//Data base structure:
-//"User_id" serial NOT NULL,
-// "First_name" character varying(30) NOT NULL,
-// "Last_name" character varying(30) NOT NULL,
-// "City" character varying(50) NOT NULL,
-// "State" character varying(30),
-// "Country" character varying(30) NOT NULL,
-// "Email" character varying(320) NOT NULL,
-// "Username" character varying(30) NOT NULL,
-// "Password" character varying(100),
-// "UserIcon" character,
-// PRIMARY KEY ("User_id")
 
-//Insert statment to check that you can log in
-//insert into User (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
-//insert into user (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
-// Login submission
+
+//old log in
 // app.post("/login", (req, res) => {
 //   //initializing vars
 //   const email = req.body.email;
@@ -120,7 +104,7 @@ app.get("/login", (req, res) => {
 // });
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
-  var data = await db.any(`select * from "User" where email = '${req.body.email}';`);
+  var data = await db.any(`select * from "User" where "Email" = '${req.body.email}';`);
   
   if (!data) {
       console.log('error 401');
@@ -133,7 +117,7 @@ app.post('/login', async (req, res) => {
       if (match == true) {
           req.session.user = user;
           req.session.save();
-          res.redirect('/discover');
+          res.redirect('/');
       }else{
           console.log('Incorrect username or password.');
           res.redirect('/register');
@@ -142,10 +126,19 @@ app.post('/login', async (req, res) => {
   
 });
 
-app.post('/user/create_account', (req,res) => {
-  const query = 
-    'INSERT INTO User (User_id, First_name, Last_name, City, State, Country, Email, Username, Password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING * ;';
-  const User_id = req.body.User_id;
+// const auth = (req, res, next) => {
+//   if (!req.session.user) {
+//     return res.redirect("/login");
+//   }
+//   next();
+// };
+
+// // Making sure the user logs in
+
+// app.use(auth);
+
+app.post('/sign-up', async (req,res) => {
+  
   const First_name = req.body.First_name;
   const Last_name = req.body.Last_name;
   const City = req.body.City;
@@ -153,10 +146,11 @@ app.post('/user/create_account', (req,res) => {
   const Country = req.body.Country;
   const Email = req.body.Email;
   const Username = req.body.Username;
-  const Password = req.body.Password;
+  const Password = await bcrypt.hash(req.body.Password, 10);
+  const query = 
+   `insert into "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING * ;`;
 
   db.any(query, [
-    User_id,
     First_name,
     Last_name,
     City, 
@@ -171,6 +165,7 @@ app.post('/user/create_account', (req,res) => {
   //   res.redirect('/login');
   // })
   .then(function (data) {
+    res.redirect('/login');
     res.status(201).json({
       status: 'success',
       // data: data,
@@ -182,14 +177,7 @@ app.post('/user/create_account', (req,res) => {
   });
 });
 
-// Making sure the user logs in
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    return res.redirect("/login");
-  }
-  next();
-};
-app.use(auth);
+
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
