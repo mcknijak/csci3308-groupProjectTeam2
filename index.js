@@ -1,19 +1,4 @@
-<<<<<<< HEAD
 const express = require("express");
-=======
-
-const express = require('express');
-const bodyParser = require('body-parser');
-const pgp = require('pg-promise')();
-require('dotenv').config();
-
-<<<<<<< HEAD
-// defining the Express app
-=======
-
-
->>>>>>> 704c938 (comment)
->>>>>>> 4e45dc1 (comment)
 const app = express();
 const pgp = require("pg-promise")();
 const bodyParser = require("body-parser");
