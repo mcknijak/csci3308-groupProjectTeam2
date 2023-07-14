@@ -3,6 +3,7 @@ const app = express();
 const pgp = require("pg-promise")();
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const bcrypt = require('bcrypt');
 
 // db config
 const dbConfig = {
@@ -36,17 +37,17 @@ app.use(
 
 
 //Set user vars
-const user = {
-  User_id: undefined,
-  First_name: undefined,
-  Last_name: undefined,
-  City: undefined,
-  State: undefined,
-  Country: undefined,
-  Email: undefined,
-  Username: undefined,
-  Password: undefined,
-};
+// const user = {
+//   User_id: undefined,
+//   First_name: undefined,
+//   Last_name: undefined,
+//   City: undefined,
+//   State: undefined,
+//   Country: undefined,
+//   Email: undefined,
+//   Username: undefined,
+//   Password: undefined,
+// };
 
 app.get('/', (req, res) => {
   res.render("pages/home", {
@@ -85,37 +86,60 @@ app.get("/login", (req, res) => {
 //insert into User (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
 //insert into user (First_name, Last_name, City, State, Country, Email, Username, Password) values ('Tester', 'TesterLastName', 'Boulder', 'Colorado', 'America', 'tester@fake.com', 'tester_username', 'Password');
 // Login submission
-app.post("/login", (req, res) => {
-  //initializing vars
-  const email = req.body.email;
+// app.post("/login", (req, res) => {
+//   //initializing vars
+//   const email = req.body.email;
 
-  const query = "select * from User where email = $1";
-  const values = [email];
+//   const query = "select * from User where email = $1";
+//   const values = [email];
 
-  // get the student_id based on the emailid
-  db.one(query, values)
-    .then((data) => {
-      const user = {
-        User_id: data.User_id,
-        First_name: data.First_name,
-        Last_name: data.Last_name,
-        City: data.City,
-        State: data.State,
-        Country: data.Country,
-        Email: data.Email,
-        Username: data.Username,
-        Password: data.Password,
-      };
+//   // get the student_id based on the emailid
+//   db.one(query, values)
+//     .then((data) => {
+//       const user = {
+//         User_id: data.User_id,
+//         First_name: data.First_name,
+//         Last_name: data.Last_name,
+//         City: data.City,
+//         State: data.State,
+//         Country: data.Country,
+//         Email: data.Email,
+//         Username: data.Username,
+//         Password: data.Password,
+//       };
 
-      req.session.user = user;
-      req.session.save();
+//       req.session.user = user;
+//       req.session.save();
 
-      res.redirect("/");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.redirect("/login");
-    });
+//       res.redirect("/");
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.redirect("/login");
+//     });
+// });
+app.post('/login', async (req, res) => {
+  // check if password from request matches with password in DB
+  var data = await db.any(`select * from "User" where email = '${req.body.email}';`);
+  
+  if (!data) {
+      console.log('error 401');
+  }else{
+
+      var user = data[0];
+
+      const match = await bcrypt.compare(req.body.password, user.password);
+
+      if (match == true) {
+          req.session.user = user;
+          req.session.save();
+          res.redirect('/discover');
+      }else{
+          console.log('Incorrect username or password.');
+          res.redirect('/register');
+      }
+  }
+  
 });
 
 app.post('/user/create_account', (req,res) => {
