@@ -52,11 +52,11 @@ app.use(
 app.set('views','./All_project_code_components/views');
 //
 app.get('/', (req, res) => {
-  // if(!req.session.user){
-  //   res.redirect('/login');//redirect to 
-  // }else{
-    res.render("pages/home")
-  //}
+  if(!req.session.user){
+    res.redirect('/login');
+  }else{
+    res.render("pages/home");
+  }
 });
 //Login page
 app.get("/login", (req, res) => {
