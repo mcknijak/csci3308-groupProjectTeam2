@@ -104,15 +104,15 @@ app.get("/sign-up", (req, res) => {//sign up page
 // });
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
-  var data = await db.any(`select * from "User" where "Email" = '${req.body.email}';`);
+  var data = await db.any(`select * from "User" where "Email" = '${req.body.Email}';`);
   
   if (!data) {
       console.log('error 401');
   }else{
 
       var user = data[0];
-
-      const match = await bcrypt.compare(req.body.password, user.password);
+      console.log(user);
+      const match = await bcrypt.compare(req.body.Password, user.Password);
 
       if (match == true) {
           req.session.user = user;
