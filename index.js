@@ -68,40 +68,6 @@ app.get("/sign-up", (req, res) => {//sign up page
 });
 
 
-
-//old log in
-// app.post("/login", (req, res) => {
-//   //initializing vars
-//   const email = req.body.email;
-
-//   const query = "select * from User where email = $1";
-//   const values = [email];
-
-//   // get the student_id based on the emailid
-//   db.one(query, values)
-//     .then((data) => {
-//       const user = {
-//         User_id: data.User_id,
-//         First_name: data.First_name,
-//         Last_name: data.Last_name,
-//         City: data.City,
-//         State: data.State,
-//         Country: data.Country,
-//         Email: data.Email,
-//         Username: data.Username,
-//         Password: data.Password,
-//       };
-
-//       req.session.user = user;
-//       req.session.save();
-
-//       res.redirect("/");
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.redirect("/login");
-//     });
-// });
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
   var data = await db.any(`select * from "User" where "Email" = '${req.body.Email}';`);
@@ -111,7 +77,7 @@ app.post('/login', async (req, res) => {
   }else{
 
       var user = data[0];
-      console.log(user);
+      //console.log(user);
       const match = await bcrypt.compare(req.body.Password, user.Password);
 
       if (match == true) {
@@ -120,22 +86,13 @@ app.post('/login', async (req, res) => {
           res.redirect('/');
       }else{
           console.log('Incorrect username or password.');
-          res.redirect('/register');
+          res.redirect('/login');
       }
   }
   
 });
 
-// const auth = (req, res, next) => {
-//   if (!req.session.user) {
-//     return res.redirect("/login");
-//   }
-//   next();
-// };
 
-// // Making sure the user logs in
-
-// app.use(auth);
 
 app.post('/sign-up', async (req,res) => {
   
@@ -178,6 +135,18 @@ app.post('/sign-up', async (req,res) => {
 });
 
 
+
+// Authentication Middleware.
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+  }
+  next();
+};
+
+// Authentication Required
+app.use(auth);
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
