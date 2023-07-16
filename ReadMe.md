@@ -31,3 +31,23 @@ Installation of Node, Azure, and PostGres. [More to come]
 
 ## Link to Deployed Application 
 [Under Development]
+
+
+## To-Do List
+
+- [x] Login Page
+- [x] Login Route
+  - [x] Store in database
+  - [x] Encrypt passwords
+- [x] Logout Page
+- [x] Logout Route
+- [x] Sign-Up Page
+- [ ] Chat Page
+    - [ ] main chat window
+    - [ ] chat sidebar
+    - [ ] send message "form"
+- [ ] chat Route - our database
+- [ ] Axios route for GET - Telegram
+- [ ] Axios route for POST / send - Telegram
+- [ ] Axios route for GET - Signal
+- [ ] Axios route for POST / send - Signal 

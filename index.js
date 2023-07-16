@@ -4,6 +4,7 @@ const pgp = require("pg-promise")();
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 
 // db config
 const dbConfig = {
@@ -153,10 +154,107 @@ app.get("/logout", (req, res) => {
   res.render("pages/logout");
 });
 
+
+////////////////////////////// CHAT SECTION HERE //////////////////////////////
+
+
+
+////////////////////////////// GET MESSAGES HERE //////////////////////////////
+
+async function getTelegramChatMessages(chatId, apiKey) {
+  try {
+    const response = await axios.get(`https://api.telegram.org/bot${apiKey}/getChatMessages?chat_id=${chatId}`);
+    
+    // Assuming the response data is in JSON format
+    const messages = response.data.messages;
+    
+    // Process and handle the messages as needed
+    console.log(messages);
+    return messages;
+  } catch (error) {
+    console.error('Error retrieving chat messages:', error.message);
+  }
+}
+
+async function getThreadBlendMessages(room_id) {
+
+  let query = `select * from messages where room_id = ${room_id};`; // query to retrieve matching messages from given room id
+
+  db.any(query)
+    .then(function (data) {
+      const messages = data.messages;
+      console.log(messages);
+      return messages;
+    })
+    .catch(function (error) {
+      console.error('Error retrieving chat messages:', error.message);
+    });
+}
+
+
 app.get("/chat/messages/sync", (req, res) => {
 
-  let query = `select * from messages where room_id = ${req.body.room_id};`; // query to retrieve matching messages from given room id
+
+  if (req.body.service_id == "telegram") {
+    getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
+  } else if (req.body.service_id == "discord") {
+    // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
+  } else {
+    getThreadBlendMessages(req.body.room_id);
+  }
 })
+
+
+////////////////////////////////   POST MESSAGES HERE ////////////////////////////////
+
+async function postTelegramChatMessages(room_id, apiKey, message) {
+  try {
+    const response = await axios.post(`https://api.telegram.org/bot${apiKey}/sendMessage`, {
+      chat_id: room_id,
+      text: message
+    });
+    
+    const result = response.data.message;
+    
+    // Process and handle the response as needed
+    console.log(message);
+  } catch (error) {
+    console.error('Error posting chat message:', error.message);
+  }
+}
+
+async function postThreadBlendMessages(room_id, message) {
+
+  let query = `insert into messages (room_id, message) values (${room_id}, ${message});`; // query to retrieve matching messages from given room id
+
+  db.any(query)
+    .then(function (data) {
+      const messages = data.messages;
+      console.log(messages);
+      return messages;
+    })
+    .catch(function (error) {
+      console.error('Error retrieving chat messages:', error.message);
+    });
+}
+
+
+app.post("/chat/messages/send", (req, res) => {
+
+
+  if (req.body.service_id == "telegram") {
+    postTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY, req.body.message);
+  } else if (req.body.service_id == "discord") {
+    // postDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
+  } else {
+    postThreadBlendMessages(req.body.room_id, req.body.message);
+  }
+})
+
+
+
+
+
 
 
 
