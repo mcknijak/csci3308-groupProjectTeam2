@@ -93,10 +93,6 @@ app.post('/login', async (req, res) => {
   
 });
 
-app.get('/signup', (req, res) => {
-  res.render('pages/signup');
-});
-
 app.post('/signup', async (req,res) => {
   
   const First_name = req.body.First_name;
