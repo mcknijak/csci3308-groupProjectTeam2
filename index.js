@@ -93,9 +93,11 @@ app.post('/login', async (req, res) => {
   
 });
 
+app.get('/signup', (req, res) => {
+  res.render('pages/signup');
+});
 
-
-app.post('/sign-up', async (req,res) => {
+app.post('/signup', async (req,res) => {
   
   const First_name = req.body.First_name;
   const Last_name = req.body.Last_name;
@@ -106,7 +108,7 @@ app.post('/sign-up', async (req,res) => {
   const Username = req.body.Username;
   const Password = await bcrypt.hash(req.body.Password, 10);
   const query = 
-   `insert into "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING * ;`;
+   `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
 
   db.any(query, [
     First_name,
@@ -118,20 +120,11 @@ app.post('/sign-up', async (req,res) => {
     Username,
     Password,
   ])
-  // .then(function (data) {
-  //   req.session.save();
-  //   res.redirect('/login');
-  // })
-  .then(function (data) {
+  .then(async (data) => {
     res.redirect('/login');
-    res.status(201).json({
-      status: 'success',
-      // data: data,
-      message: 'data added successfully',
-    });
   })
-  .catch(function (err) {
-    return console.log(err);
+  .catch(async (err) => {
+    res.redirect('/register');
   });
 });
 
