@@ -153,6 +153,14 @@ app.get("/logout", (req, res) => {
   res.render("pages/logout");
 });
 
+app.get("/chat/messages/sync", (req, res) => {
+
+  let query = `select * from messages where room_id = ${req.body.room_id};`; // query to retrieve matching messages from given room id
+})
+
+
+
+
 //This goes bottom
 app.listen(4000, () => {
   console.log('listening on port 4000');
