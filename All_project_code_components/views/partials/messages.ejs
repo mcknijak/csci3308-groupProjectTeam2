@@ -9,7 +9,7 @@
     </div>
     <div class="chat-window-body">
             {messages.map(message => (
-            <p className={`chat__message ${message.name===user.displayName && 'chat__receiver' }`}>
+            <p className={`chat__message ${message.name===user.username && 'chat__receiver' }`}>
                 <span className="chat__name">{message.name}</span>
                 {message.message}
                 <span className="chat__timestamp">
@@ -18,4 +18,8 @@
             </p>
             ))}
     </div>
+    <form action="chat/messages/send" method="POST">
+        <input type="text" name="message" placeholder="Type a message" />
+        <button type="submit">Send</button>
+    </form>
 </div>
