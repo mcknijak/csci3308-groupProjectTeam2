@@ -1,20 +1,26 @@
 {
-    "name": "node",
-    "main": "index.js",
-    "dependencies": {
-        "bcrypt": "^5.1.0",
-        "body-parser": "1.20.0",
-        "dotenv": "^16.0.3",
-        "matrix-js-sdk": "^26.2.0",
-        "cli-color": "^2.0.3",
-        "pg-promise": "^10.11.1",
-        "nodemon": "2.0.20",
-        "express-session": "^1.17.3",
-        "express": "^4.18.2",
-        "ejs": "^3.1.9"
-    },
-    "scripts": {
-        "prestart": "npm install",
-        "start": "nodemon index.js"
-    }
+  "name": "node",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "1.20.0",
+    "dotenv": "^16.0.3",
+    "matrix-js-sdk": "^26.2.0",
+    "cli-color": "^2.0.3",
+    "pg-promise": "^10.11.1",
+    "nodemon": "2.0.20",
+    "express-session": "^1.17.3",
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "axios": "^1.4.0"
+  },
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "mocha --exit --recursive ./tests/unit ./tests/integration",
+    "testw": "mocha --exit --recursive ./tests/unit --watch ./modules/ ./tests/unit/",
+    "testWithCoverage": "nyc npm run test",
+    "cuke": "cucumber-js --config config/cucumber.yaml"
+  }
 }

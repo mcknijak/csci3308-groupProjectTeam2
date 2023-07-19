@@ -136,7 +136,7 @@ const auth = (req, res, next) => {
 };
 
 // Authentication Required
-app.use(auth);
+// app.use(auth);
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
@@ -146,7 +146,9 @@ app.get("/logout", (req, res) => {
 
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
-
+app.get("/chat", (req, res) => { 
+  res.render("pages/chat");
+});
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
 
