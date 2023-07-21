@@ -50,12 +50,12 @@ app.use(
 //   Password: undefined,
 // };
 
-app.set('views','./All_project_code_components/views');
+app.set('views', './All_project_code_components/views');
 //
 app.get('/', (req, res) => {
-  if(!req.session.user){
+  if (!req.session.user) {
     res.redirect('/login');
-  }else{
+  } else {
     res.render("pages/home");
   }
 });
@@ -72,29 +72,30 @@ app.get("/sign-up", (req, res) => {//sign up page
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
   var data = await db.any(`select * from "User" where "Email" = '${req.body.Email}';`);
-  
-  if (!data) {
-      console.log('error 401');
-  }else{
 
-      var user = data[0];
-      //console.log(user);
-      const match = await bcrypt.compare(req.body.Password, user.Password);
+  if (data.length === 0) {
+    res.redirect('/sign-up');
+    console.log('error 401');
+  } else {
 
-      if (match == true) {
-          req.session.user = user;
-          req.session.save();
-          res.redirect('/');
-      }else{
-          console.log('Incorrect username or password.');
-          res.redirect('/login');
-      }
+    var user = data[0];
+    //console.log(user);
+    const match = await bcrypt.compare(req.body.Password, user.Password);
+
+    if (match == true) {
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/');
+    } else {
+      console.log('Incorrect username or password.');
+      res.redirect('/login');
+    }
   }
-  
+
 });
 
-app.post('/signup', async (req,res) => {
-  
+app.post('/signup', async (req, res) => {
+
   const First_name = req.body.First_name;
   const Last_name = req.body.Last_name;
   const City = req.body.City;
@@ -103,25 +104,25 @@ app.post('/signup', async (req,res) => {
   const Email = req.body.Email;
   const Username = req.body.Username;
   const Password = await bcrypt.hash(req.body.Password, 10);
-  const query = 
-   `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+  const query =
+    `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
 
   db.any(query, [
     First_name,
     Last_name,
-    City, 
+    City,
     State,
     Country,
     Email,
     Username,
     Password,
   ])
-  .then(async (data) => {
-    res.redirect('/login');
-  })
-  .catch(async (err) => {
-    res.redirect('/register');
-  });
+    .then(async (data) => {
+      res.redirect('/login');
+    })
+    .catch(async (err) => {
+      res.redirect('/register');
+    });
 });
 
 
@@ -129,8 +130,8 @@ app.post('/signup', async (req,res) => {
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
-      // Default to login page.
-      return res.redirect('/login');
+    // Default to login page.
+    return res.redirect('/login');
   }
   next();
 };
@@ -146,7 +147,7 @@ app.get("/logout", (req, res) => {
 
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
-app.get("/chat", (req, res) => { 
+app.get("/chat", (req, res) => {
   res.render("pages/chat");
 });
 
@@ -155,10 +156,10 @@ app.get("/chat", (req, res) => {
 async function getTelegramChatMessages(chatId, apiKey) {
   try {
     const response = await axios.get(`https://api.telegram.org/bot${apiKey}/getChatMessages?chat_id=${chatId}`);
-    
+
     // Assuming the response data is in JSON format
     const messages = response.data.messages;
-    
+
     // Process and handle the messages as needed
     console.log(messages);
     return messages;
@@ -204,9 +205,9 @@ async function postTelegramChatMessages(room_id, apiKey, message) {
       chat_id: room_id,
       text: message
     });
-    
+
     const result = response.data.message;
-    
+
     // Process and handle the response as needed
     console.log(message);
   } catch (error) {
