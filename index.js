@@ -197,7 +197,19 @@ app.get("/logout", (req, res) => {
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
 app.get("/chat", (req, res) => {
-  res.render("pages/chat");
+  if (req.body.service_id == "telegram") {
+    let messages = getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
+  } else if (req.body.service_id == "discord") {
+    // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
+  } else {
+    let tbmessages = getThreadBlendMessages(req.body.room_id);
+  }
+
+  res.render("pages/chat", {
+    Message: messages, 
+    User, 
+    Sender,
+  });
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
