@@ -94,16 +94,16 @@ app.post('/login', async (req, res) => {
 
 });
 
-app.post('/signup', async (req, res) => {
-
-  const First_name = req.body.First_name;
-  const Last_name = req.body.Last_name;
-  const City = req.body.City;
-  const State = req.body.State;
-  const Country = req.body.Country;
-  const Email = req.body.Email;
-  const Username = req.body.Username;
-  const Password = await bcrypt.hash(req.body.Password, 10);
+app.post('/sign-up', async (req, res) => {
+  try {
+  const First_name = req.body.first_name;
+  const Last_name = req.body.last_name;
+  const City = req.body.city;
+  const State = req.body.state;
+  const Country = req.body.country;
+  const Email = req.body.email;
+  const Username = req.body.username;
+  const Password = await bcrypt.hash(req.body.password, 10);
   const query =
     `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
 
@@ -117,12 +117,10 @@ app.post('/signup', async (req, res) => {
     Username,
     Password,
   ])
-    .then(async (data) => {
-      res.redirect('/login');
-    })
-    .catch(async (err) => {
+  res.redirect('/login');
+  } catch(err) {
       res.redirect('/register');
-    });
+    }
 });
 
 
