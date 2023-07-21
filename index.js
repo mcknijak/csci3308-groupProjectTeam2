@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const path = require('path')
 
 // db config
 const dbConfig = {
@@ -20,6 +21,9 @@ const db = pgp(dbConfig);
 
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
+
+//stlyesheet link
+app.use(express.static(path.join(__dirname, 'All_project_code_components')));
 
 // set session
 app.use(
@@ -56,7 +60,9 @@ app.get('/', (req, res) => {
   if (!req.session.user) {
     res.redirect('/login');
   } else {
-    res.render("pages/home");
+    res.render("pages/home", {
+      Username: req.session.user.Username,
+    });
   }
 });
 //Login page
