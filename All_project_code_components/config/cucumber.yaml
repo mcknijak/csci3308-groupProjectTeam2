@@ -1,0 +1,6 @@
+default:
+  publishQuiet: true
+  paths:
+    - '/Users/aaronsemones/CSCI3308/Project/csci3308-groupProjectTeam2/All_project_code_components/tests/bdd/threadblend.feature'
+  format:
+    - "html:cucumber-reports/cucumber-report.html" 
