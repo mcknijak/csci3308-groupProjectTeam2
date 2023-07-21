@@ -62,6 +62,7 @@ app.get('/', (req, res) => {
   } else {
     res.render("pages/home", {
       Username: req.session.user.Username,
+      error : null
     });
   }
 });
@@ -72,6 +73,50 @@ app.get("/login", (req, res) => {
 
 app.get("/sign-up", (req, res) => {//sign up page
   res.render("pages/signup");
+});
+
+app.post('/home', async (req, res) => {
+  // check if password from request matches with password in DB
+  var data = await db.any(`select * from "User" where "Username" = '${req.session.user.Username}';`);
+
+  if (data.length === 0) {
+    res.render("pages/home", {
+      Username: req.session.user.Username,
+      error: "Username not found"
+    });
+  } else {
+    const query =
+      `INSERT INTO "User_service" ("User_id", "Service_id", api_key) VALUES ($1, $2, $3)`
+      const u_id = data[0].User_id;
+      let s_id;
+      const key = req.body.API_key;
+      
+      if(req.body.connected_app == "telegram"){
+        s_id = 3;
+      }else{
+        s_id = 2;
+      }
+      db.any(query, [
+        u_id,
+        s_id,
+        key,
+      ])
+      .then(function (data) {
+        res.render("pages/home", {
+          Username: req.session.user.Username,
+          error: "Data added successfully"
+        });
+      })
+      // if query execution fails
+      // send error message
+      .catch(function (err) {
+        res.render("pages/home", {
+          Username: req.session.user.Username,
+          error: "Failure to add data"
+        });
+        return console.log(err);
+      });
+  }
 });
 
 
@@ -102,31 +147,31 @@ app.post('/login', async (req, res) => {
 
 app.post('/sign-up', async (req, res) => {
   try {
-  const First_name = req.body.first_name;
-  const Last_name = req.body.last_name;
-  const City = req.body.city;
-  const State = req.body.state;
-  const Country = req.body.country;
-  const Email = req.body.email;
-  const Username = req.body.username;
-  const Password = await bcrypt.hash(req.body.password, 10);
-  const query =
-    `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
+    const First_name = req.body.first_name;
+    const Last_name = req.body.last_name;
+    const City = req.body.city;
+    const State = req.body.state;
+    const Country = req.body.country;
+    const Email = req.body.email;
+    const Username = req.body.username;
+    const Password = await bcrypt.hash(req.body.password, 10);
+    const query =
+      `INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Email", "Username", "Password") VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`;
 
-  db.any(query, [
-    First_name,
-    Last_name,
-    City,
-    State,
-    Country,
-    Email,
-    Username,
-    Password,
-  ])
-  res.redirect('/login');
-  } catch(err) {
-      res.redirect('/register');
-    }
+    db.any(query, [
+      First_name,
+      Last_name,
+      City,
+      State,
+      Country,
+      Email,
+      Username,
+      Password,
+    ])
+    res.redirect('/login');
+  } catch (err) {
+    res.redirect('/register');
+  }
 });
 
 
