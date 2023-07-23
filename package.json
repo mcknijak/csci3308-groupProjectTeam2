@@ -22,6 +22,6 @@
     "test": "mocha --exit --recursive ./tests/unit ./tests/integration",
     "testw": "mocha --exit --recursive ./tests/unit --watch ./modules/ ./tests/unit/",
     "testWithCoverage": "nyc npm run test",
-    "cuke": "cucumber-js --config All_project_componet/config/cucumber.yaml"
+    "cuke": "cucumber-js --config /config/cucumber.yaml"
   }
 }
