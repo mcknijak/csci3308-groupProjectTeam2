@@ -199,7 +199,11 @@ app.get("/logout", (req, res) => {
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
 app.get("/chat", (req, res) => {
-  res.render("pages/chat");
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    res.render("pages/chat");
+  }
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////

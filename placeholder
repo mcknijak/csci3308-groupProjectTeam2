@@ -1,0 +1,52 @@
+app.get("/chat", (req, res) => {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    res.render("pages/chat");
+  }
+});
+app.post('/home', async (req, res) => {
+    // check if password from request matches with password in DB
+    var data = await db.any(`select * from "User" where "Username" = '${req.session.user.Username}';`);
+  
+    if (data.length === 0) {
+      res.render("pages/home", {
+        Username: req.session.user.Username,
+        error: "Username not found"
+      });
+    } else {
+      const query =
+        `insert into "User_service" ("User_id", "Service_id", "api_key", "signing_key") values ($1, $2, $3)`
+        const u_id = data[0].User_id;
+        let s_id;
+        const key = req.body.API_key;
+        
+        if(req.body.connected_app == "slack"){
+          s_id = 6;
+        }else if(req.body.connected_app == "telegram"){
+          s_id = 3;
+        }else{
+          s_id =2;
+        }
+        db.any(query, [
+          u_id,
+          s_id,
+          key,
+        ])
+        .then(function (data) {
+          res.render("pages/home", {
+            Username: req.session.user.Username,
+            error: "Data added successfully"
+          });
+        })
+        // if query execution fails
+        // send error message
+        .catch(function (err) {
+          res.render("pages/home", {
+            Username: req.session.user.Username,
+            error: "Failure to add data"
+          });
+          return console.log(err);
+        });
+    }
+  });
