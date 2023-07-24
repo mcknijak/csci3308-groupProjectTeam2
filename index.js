@@ -234,11 +234,25 @@ app.get("/chat", async (req, res) => {
   // Fetching channel history
   const users = await getSlackUsers();
   let messages = await getSlackChatMessages(channelId);
+  const active_channels = await getChats(userId);
   // Render the chat page with the info it needs
-  res.render("pages/chat", { messages: messages, user_id: userId, users: users, channelId: channelId });
+  res.render("pages/chat", { messages: messages, user_id: userId, users: users, channelId: channelId, channels: channels, active_channels: active_channels });
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
+
+async function getChats(user_id) {
+  let query = `SELECT channel_id FROM active_chats WHERE user_id = ${user_id} ;`;
+  try {
+    const data = await db.any(query);
+    // const channel_ids = data.map(row => row.channel_id);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error getting channel ids:", error.message);
+    throw error;
+  }
+}
 
 
 async function getSlackChatMessages(channelId) {
