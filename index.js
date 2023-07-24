@@ -40,19 +40,17 @@ app.use(
   })
 );
 
-
-//Set user vars
-// const user = {
-//   User_id: undefined,
-//   First_name: undefined,
-//   Last_name: undefined,
-//   City: undefined,
-//   State: undefined,
-//   Country: undefined,
-//   Email: undefined,
-//   Username: undefined,
-//   Password: undefined,
-// };
+const user = {
+  User_id: undefined,
+  First_name: undefined,
+  Last_name: undefined,
+  City: undefined,
+  State: undefined,
+  Country: undefined,
+  Email: undefined,
+  Username: undefined,
+  Password: undefined,
+};
 
 app.set('views', './All_project_code_components/views');
 //
@@ -198,11 +196,25 @@ app.get("/logout", (req, res) => {
 
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
-app.get("/chat", (req, res) => {
-  if (!req.session.user) {
-    res.redirect('/login');
-  } else {
-    res.render("pages/chat");
+app.get("/chat", async (req, res) => {
+  var messages;
+  try { 
+    if (req.body.service_id == "telegram") {
+      messages = await getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
+    // } else if (req.body.service_id == "discord") {
+      // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
+    } else {
+      messages = await getThreadBlendMessages(req.body.room_id);
+    }
+
+    res.render("pages/chat", {
+      Message: messages, 
+      User: req.session.user, 
+      Sender,
+    });
+  } catch (error) {
+    console.error('Error getting chat messages:', error.message);
+    res.status(500).send('Internal Server Error');
   }
 });
 
