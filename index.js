@@ -201,8 +201,6 @@ app.get("/chat", async (req, res) => {
   try { 
     if (req.body.service_id == "telegram") {
       messages = await getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
-    // } else if (req.body.service_id == "discord") {
-      // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
     } else {
       messages = await getThreadBlendMessages(req.body.room_id);
     }
@@ -262,6 +260,19 @@ app.get("/chat/messages/sync", (req, res) => {
     getThreadBlendMessages(req.body.room_id);
   }
 })
+
+async function getChats(user_id) {
+  let query = `SELECT channel_id FROM active_chats WHERE user_id = ${user_id} ;`;
+  try {
+    const data = await db.any(query);
+    // const channel_ids = data.map(row => row.channel_id);
+    console.log(data);
+    return data;
+  } catch (error) {
+      console.error('Error getting channel ids:', error.message);
+      throw error;
+    };
+}
 
 
 ////////////////////////////////   POST MESSAGES HERE ////////////////////////////////
