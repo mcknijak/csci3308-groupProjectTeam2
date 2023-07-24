@@ -163,8 +163,10 @@ app.get("/chat", async (req, res) => {
   // This code will select which service to get messages from 
 
   // let messages = [];
+  // let users = {};
   // if (req.session.service_id == 1) {
   //   messages = getSlackChatMessages(req.session.chat_id);
+  //   users    = getSlackUsers()
   // }
   // else if (req.session.service_id == 2) {
   //   messages = getTelegramChatMessages(req.session.chat_id);
@@ -175,21 +177,10 @@ app.get("/chat", async (req, res) => {
   let channelId = "C05HUF9UC31";
   let userId = "U05J63RV1EH";   // req.session.user_id
   // Fetching channel history
-  try {
-    const result = await slack.client.conversations.history({
-      // The token you used to initialize your app
-      token: process.env.SLACK_BOT_TOKEN,
-      channel: channelId,
-    });
-
-    let messages = result.messages;
-    // Send the messages as the response
-    res.render("pages/chat", { messages: messages, user_id: userId });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("An error occurred while fetching chat history.");
-  }
+  const users = await getSlackUsers();
+  let messages = await getSlackChatMessages(channelId);
+  // Render the chat page with the info it needs
+  res.render("pages/chat", { messages: messages, user_id: userId, users: users });
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
@@ -225,33 +216,6 @@ async function getTelegramChatMessages(chatId, apiKey) {
   }
 }
 
-// async function getThreadBlendMessages(room_id) {
-
-//   let query = `select * from messages where room_id = ${room_id};`; // query to retrieve matching messages from given room id
-
-//   db.any(query)
-//     .then(function (data) {
-//       const messages = data.messages;
-//       console.log(messages);
-//       return messages;
-//     })
-//     .catch(function (error) {
-//       console.error('Error retrieving chat messages:', error.message);
-//     });
-// }
-
-
-app.get("/chat/messages/sync", (req, res) => {
-
-
-  if (req.body.service_id == "telegram") {
-    getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
-  } else if (req.body.service_id == "discord") {
-    // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
-  } else {
-    getThreadBlendMessages(req.body.room_id);
-  }
-})
 
 
 ////////////////////////////////   POST MESSAGES HERE ////////////////////////////////
@@ -272,20 +236,6 @@ async function postTelegramChatMessages(room_id, apiKey, message) {
   }
 }
 
-async function postThreadBlendMessages(room_id, message) {
-
-  let query = `insert into messages (room_id, message) values (${room_id}, ${message});`; // query to retrieve matching messages from given room id
-
-  db.any(query)
-    .then(function (data) {
-      const messages = data.messages;
-      console.log(messages);
-      return messages;
-    })
-    .catch(function (error) {
-      console.error('Error retrieving chat messages:', error.message);
-    });
-}
 
 
 app.post("/chat/messages/send", (req, res) => {
@@ -301,8 +251,38 @@ app.post("/chat/messages/send", (req, res) => {
 })
 
 
+////////////////////////////////////////// MAP USER TOKENS ONTO NAMES ///////////////////////////////////////////////////
 
+// populate a dictionary that maps Slack User IDs onto their display names
+async function getSlackUsers() {
 
+  // set up an empty dictionary
+  let usersStore = {};
+
+  try {
+    // grab the current users in the workspace
+    const result = await slack.client.users.list();
+
+    saveSlackUsers(result.members);
+
+    
+  } catch (error) {
+    console.error(error);
+  }
+
+  return usersStore;
+  // Put users into the JavaScript object
+  function saveSlackUsers(usersArray) {
+    let userId = "";
+    usersArray.forEach(function (user) {
+      // Key user info on their unique user ID
+      userId = user["id"];
+
+      // Store the entire user object (you may not need all of the info)
+      usersStore[userId] = user.real_name;
+    });
+  }
+}
 
 
 
@@ -313,8 +293,60 @@ app.listen(4000, () => {
   console.log('listening on port 4000');
 });
 
-// Start your Bolt app
+// Start the Slack Bolt app
 (async () => {
   await slack.start();
   console.log('Bolt app is running!');
 })();
+
+
+
+
+
+/////////////////////// UNSED CODE - KEPT FOR REFERENCE REASONS ///////////////////////
+
+
+
+// async function postThreadBlendMessages(room_id, message) {
+
+//   let query = `insert into messages (room_id, message) values (${room_id}, ${message});`; // query to retrieve matching messages from given room id
+
+//   db.any(query)
+//     .then(function (data) {
+//       const messages = data.messages;
+//       console.log(messages);
+//       return messages;
+//     })
+//     .catch(function (error) {
+//       console.error('Error retrieving chat messages:', error.message);
+//     });
+// }
+
+
+// async function getThreadBlendMessages(room_id) {
+
+//   let query = `select * from messages where room_id = ${room_id};`; // query to retrieve matching messages from given room id
+
+//   db.any(query)
+//     .then(function (data) {
+//       const messages = data.messages;
+//       console.log(messages);
+//       return messages;
+//     })
+//     .catch(function (error) {
+//       console.error('Error retrieving chat messages:', error.message);
+//     });
+// }
+
+
+//app.get("/chat/messages/sync", (req, res) => {
+
+
+//   if (req.body.service_id == "telegram") {
+//     getTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY);
+//   } else if (req.body.service_id == "discord") {
+//     // getDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
+//   } else {
+//     getThreadBlendMessages(req.body.room_id);
+//   }
+// })

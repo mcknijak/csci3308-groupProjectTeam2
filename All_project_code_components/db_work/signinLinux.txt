@@ -1,0 +1,1 @@
+psql --host=ThreadBlend-db-main.postgres.database.azure.com --port=5432 --username=asemones --dbname=postgres
