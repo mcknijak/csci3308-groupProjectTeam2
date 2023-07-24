@@ -100,10 +100,11 @@ app.post('/home', async (req, res) => {
     });
   } else {
     const query =
-      `insert into "User_service" ("User_id", "Service_id", "api_key", "signing_key") values ($1, $2, $3)`
+      `insert into "User_service" ("User_id", "Service_id", "api_key", "signing_key") values ($1, $2, $3, $4)`
       const u_id = data[0].User_id;
       let s_id;
-      const key = req.body.API_key;
+    const key = req.body.API_key;
+    const signing = req.body.s_key;
       
       if(req.body.connected_app == "slack"){
         s_id = 6;
@@ -116,8 +117,9 @@ app.post('/home', async (req, res) => {
         u_id,
         s_id,
         key,
+        signing
       ])
-      .then(function (data) {
+        .then(function (data) {
         res.render("pages/home", {
           Username: req.session.user.Username,
           error: "Data added successfully"
@@ -202,7 +204,7 @@ const auth = (req, res, next) => {
 };
 
 // Authentication Required
-// app.use(auth);
+app.use(auth);
 
 app.get("/logout", (req, res) => {
   req.session.destroy();
@@ -227,14 +229,16 @@ app.get("/chat", async (req, res) => {
   //   messages = getTelegramChatMessages(req.session.chat_id);
   // }
 
-
+  let api_query = `select api_key, signing_key from "User_service"  where "User_id" = ${req.session.user.User_id}`
+  let api_info = await db.oneOrNone(api_query);
   // Replace 'channel-id' with the ID of the channel you want to fetch messages from
-  let channelId = "C05HUF9UC31";
+  let channelId = "C05JMNQNS1X";
   let userId = "U05J63RV1EH";   // req.session.user_id
   // Fetching channel history
   const users = await getSlackUsers();
   let messages = await getSlackChatMessages(channelId);
-  const active_channels = await getChats(userId);
+  const active_channels = await getChats(req.session.user.Username);
+  let channels = await getAllChannels();
   // Render the chat page with the info it needs
   res.render("pages/chat", { messages: messages, user_id: userId, users: users, channelId: channelId, channels: channels, active_channels: active_channels });
 });
@@ -242,9 +246,9 @@ app.get("/chat", async (req, res) => {
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
 
 async function getChats(user_id) {
-  let query = `SELECT channel_id FROM active_chats WHERE user_id = ${user_id} ;`;
+  let query = `SELECT channel_id FROM "active_chats" WHERE "user_id" = 16 ;`;
   try {
-    const data = await db.any(query);
+    const data = await db.manyOrNone(query);
     // const channel_ids = data.map(row => row.channel_id);
     console.log(data);
     return data;
@@ -254,6 +258,18 @@ async function getChats(user_id) {
   }
 }
 
+
+async function getAllChannels() {
+    try {
+    // Call the conversations.list method using the WebClient
+    const result = await slack.client.conversations.list();
+      console.log(result.channels);
+    return result.channels;
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
 
 async function getSlackChatMessages(channelId) {
   try {

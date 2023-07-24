@@ -45,15 +45,17 @@
                 <div id="contacts">
                     <!-- dynamically generate this list using an api call and javascript embedded here -->
                     <ul>
-                        <% for (let i = 0; i < active_channels.length; i++) { %>
+                        <% for (let i=0; i < channels.length; i++) { %>
                             <li class="contact">
                                 <div class="wrap">
-                                    <div class="meta">
-                                        <p class="name"> <%= active_channels.name %> </p>
+                                    <div class="meta" style="color:blue">
+                                        <p class="name" style="color:grey">
+                                            <%= channels.name %>
+                                        </p>
                                     </div>
                                 </div>
                             </li>
-                        <% } %>
+                            <% } %>
                     </ul>
                 </div>
                 <div id="bottom-bar">
@@ -66,8 +68,7 @@
             <div class="content">
                 <!-- swap this class with information from the active conversation-->
                 <div class="contact-profile">
-                    <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-                    <p>Harvey Specter</p>
+                    <p>Main App Channel</p>
                     <!-- Replace with third party chat integrations 
                         <div class="social-media">
                         <i class="fa fa-facebook" aria-hidden="true"></i>
