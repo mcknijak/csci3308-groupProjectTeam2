@@ -5,6 +5,14 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const { App } = require('@slack/bolt');
+
+
+// initialize the slack bot
+const slack = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+});
 
 // db config
 const dbConfig = {
@@ -13,13 +21,16 @@ const dbConfig = {
   database: process.env.POSTGRES_DB,
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
-  ssl: true
+  ssl: true,
 };
 
 const db = pgp(dbConfig);
 
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
+
+// Plugging Bolt into the Express application
+//app.use('/slack/events', slack.receiver.router);
 
 // set session
 app.use(
@@ -146,11 +157,58 @@ app.get("/logout", (req, res) => {
 
 ////////////////////////////// CHAT SECTION HERE //////////////////////////////
 
-app.get("/chat", (req, res) => { 
-  res.render("pages/chat");
+app.get("/chat", async (req, res) => {
+
+
+  // This code will select which service to get messages from 
+
+  // let messages = [];
+  // if (req.session.service_id == 1) {
+  //   messages = getSlackChatMessages(req.session.chat_id);
+  // }
+  // else if (req.session.service_id == 2) {
+  //   messages = getTelegramChatMessages(req.session.chat_id);
+  // }
+
+
+  // Replace 'channel-id' with the ID of the channel you want to fetch messages from
+  let channelId = "C05HUF9UC31";
+  let userId = "U05J63RV1EH";   // req.session.user_id
+  // Fetching channel history
+  try {
+    const result = await slack.client.conversations.history({
+      // The token you used to initialize your app
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channelId,
+    });
+
+    let messages = result.messages;
+    // Send the messages as the response
+    res.render("pages/chat", { messages: messages, user_id: userId });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while fetching chat history.");
+  }
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
+
+
+async function getSlackChatMessages(channelId) {
+  try {
+    const result = await slack.client.conversations.history({
+      // The token you used to initialize your app
+      token: process.env.SLACK_BOT_TOKEN,
+      channel: channelId,
+    });
+
+    let messages = result.messages;
+    return messages;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function getTelegramChatMessages(chatId, apiKey) {
   try {
@@ -167,20 +225,20 @@ async function getTelegramChatMessages(chatId, apiKey) {
   }
 }
 
-async function getThreadBlendMessages(room_id) {
+// async function getThreadBlendMessages(room_id) {
 
-  let query = `select * from messages where room_id = ${room_id};`; // query to retrieve matching messages from given room id
+//   let query = `select * from messages where room_id = ${room_id};`; // query to retrieve matching messages from given room id
 
-  db.any(query)
-    .then(function (data) {
-      const messages = data.messages;
-      console.log(messages);
-      return messages;
-    })
-    .catch(function (error) {
-      console.error('Error retrieving chat messages:', error.message);
-    });
-}
+//   db.any(query)
+//     .then(function (data) {
+//       const messages = data.messages;
+//       console.log(messages);
+//       return messages;
+//     })
+//     .catch(function (error) {
+//       console.error('Error retrieving chat messages:', error.message);
+//     });
+// }
 
 
 app.get("/chat/messages/sync", (req, res) => {
@@ -254,3 +312,9 @@ app.post("/chat/messages/send", (req, res) => {
 app.listen(4000, () => {
   console.log('listening on port 4000');
 });
+
+// Start your Bolt app
+(async () => {
+  await slack.start();
+  console.log('Bolt app is running!');
+})();

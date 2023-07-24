@@ -2,6 +2,13 @@
 BEGIN;
 
 
+CREATE TABLE IF NOT EXISTS public."Service"
+(
+    "Service_id" serial,
+    "Name" character varying(50) NOT NULL,
+    PRIMARY KEY ("Service_id")
+);
+
 CREATE TABLE IF NOT EXISTS public."User"
 (
     "User_id" serial NOT NULL,
@@ -14,20 +21,7 @@ CREATE TABLE IF NOT EXISTS public."User"
     "Username" character varying(30) NOT NULL,
     "Password" character varying(100),
     "UserIcon" character,
-    PRIMARY KEY ("User_id")
-);
-
-CREATE TABLE IF NOT EXISTS public."Service"
-(
-    "Service_id" serial,
-    "Name" character varying(50) NOT NULL,
-    PRIMARY KEY ("Service_id")
-);
-
-CREATE TABLE IF NOT EXISTS public."User_service"
-(
-    "User_id" integer NOT NULL,
-    "Service_id" integer NOT NULL,
+    "Service_id" integer not null,
     PRIMARY KEY ("User_id", "Service_id")
 );
 
@@ -37,6 +31,8 @@ CREATE TABLE IF NOT EXISTS public."Message"
     "Message_content" character NOT NULL,
     "Time " timestamp without time zone,
     "Date" date,
+    "Service_id" integer NOT NULL,
+    "sender_id" 
     PRIMARY KEY ("Message_id")
 );
 
