@@ -6,7 +6,15 @@ const session = require("express-session");
 const bcrypt = require('bcrypt');
 const axios = require('axios');
 const { App } = require('@slack/bolt');
+const http = require("http");
+const socketIo = require("socket.io");
 
+const server = http.createServer(app); // Create an HTTP server with the Express app
+const io = socketIo(server); // Create a Socket.IO server with the HTTP server
+
+
+const SLACK_BOT_TOKEN = "xoxp-5620944458355-5618127987493-5620965414421-df2707137e2c834f0e668d77ad7e6305";
+const SLACK_SIGNING_SECRET = "9fa5647fbb35276b974725e974de3f44";
 
 // initialize the slack bot
 const slack = new App({
@@ -180,7 +188,7 @@ app.get("/chat", async (req, res) => {
   const users = await getSlackUsers();
   let messages = await getSlackChatMessages(channelId);
   // Render the chat page with the info it needs
-  res.render("pages/chat", { messages: messages, user_id: userId, users: users });
+  res.render("pages/chat", { messages: messages, user_id: userId, users: users, channelId: channelId });
 });
 
 ////////////////////////////// GET MESSAGES HERE //////////////////////////////
@@ -220,6 +228,11 @@ async function getTelegramChatMessages(chatId, apiKey) {
 
 ////////////////////////////////   POST MESSAGES HERE ////////////////////////////////
 
+
+async function sendMessage(msg) {
+  postSlackMessage(msg);
+}
+
 async function postTelegramChatMessages(room_id, apiKey, message) {
   try {
     const response = await axios.post(`https://api.telegram.org/bot${apiKey}/sendMessage`, {
@@ -237,19 +250,20 @@ async function postTelegramChatMessages(room_id, apiKey, message) {
 }
 
 
+async function postSlackMessage(msg) {
+  try {
+    // Call the chat.postMessage method using the WebClient
+    const result = await client.chat.postMessage({
+      channel: msg.channelId,
+      text: msg.text,
+      as_user: true
+    });
 
-app.post("/chat/messages/send", (req, res) => {
-
-
-  if (req.body.service_id == "telegram") {
-    postTelegramChatMessages(req.body.room_id, process.env.TELEGRAM_API_KEY, req.body.message);
-  } else if (req.body.service_id == "discord") {
-    // postDiscordChatMessages(req.body.room_id, process.env.DISCORD_API_KEY);
-  } else {
-    postThreadBlendMessages(req.body.room_id, req.body.message);
+    console.log(result);
+  } catch (error) {
+    console.error(error);
   }
-})
-
+}
 
 ////////////////////////////////////////// MAP USER TOKENS ONTO NAMES ///////////////////////////////////////////////////
 
@@ -282,9 +296,28 @@ async function getSlackUsers() {
       usersStore[userId] = user.real_name;
     });
   }
-}
+};
 
 
+io.on("connection", (socket) => {
+  console.log("New client connected");
+
+  // Listen for a 'new message' event
+  socket.on("new message", async (msg) => {
+    console.log("Message received: ", msg);
+    // call the post method
+    if (userId == msg.userId) {
+      await sendMessage(msg);
+    }
+    // mit this message to all other clients
+    socket.broadcast.emit("new message", msg);
+    //
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
 
 
 
