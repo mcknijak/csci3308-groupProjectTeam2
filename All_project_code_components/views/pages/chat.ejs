@@ -6,11 +6,11 @@
             <div id="sidepanel">
                 <div id="profile">
                     <div class="wrap">
-                        <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-                        <p>Mike Ross</p>
+                        <!-- <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" /> -->
+                        <p> <%= users[user_id] %></p>
                         <!-- swap out with  user.first_name + user.last_name %> -->
-                        <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-                        <div id="status-options">
+                        <!-- <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i> -->
+                        <!-- <div id="status-options">
                             <ul>
                                 <li id="status-online" class="active"><span class="status-circle"></span>
                                     <p>Online</p>
@@ -25,7 +25,7 @@
                                     <p>Offline</p>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                         <!--
                             This section can be used to add in our third_party stuff?
                             <div id="expanded">
@@ -86,6 +86,7 @@
             </div>
             <!-- this div needs to be dynamically implemented as well-->
             <div class="content">
+                <!-- swap this class with information from the active conversation-->
                 <div class="contact-profile">
                     <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
                     <p>Harvey Specter</p>
@@ -99,7 +100,7 @@
                 <div class="messages">
                     <!-- Dynamically generate this part as well -->
                     <ul>
-                        <% for (let i = 0; i < messages.length; i++) { %>
+                        <% for (let i = messages.length - 1; i >= 0; i--) { %>
                             <li class= <%= (user_id == messages[i].user ? "sent" : "replies") %> >
                                 <h4><%= users[messages[i].user]  %></h4>
                                 <p><%= messages[i].text %></p>
@@ -155,10 +156,12 @@
 
             function newMessage() {
                 message = $(".message-input input").val();
+                let user = $("#profile .wrap p").text();
+
                 if ($.trim(message) == '') {
                     return false;
                 }
-                $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+                $('<li class="sent"><h4>'+ user +'</h4><p>' + message + '</p></li>').appendTo($('.messages ul'));
                 $('.message-input input').val(null);
                 $('.contact.active .preview').html('<span>You: </span>' + message);
                 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
