@@ -311,6 +311,27 @@ app.post("/chat/messages/send", (req, res) => {
 })
 
 
+//add_chat form
+app.post('/add_chat', async (req, res) => {
+  // check if password from request matches with password in DB
+  var data = await db.any(`select * from "User" where "Username" = '${req.session.user.Username}';`);
+  var u_id = data[0].User_id;
+  const c_id = req.body.channel_name;
+    const query =
+      `insert into "active_chats" ("user_id", "channel_id") values ($1, $2)`
+      db.any(query, [
+        u_id,
+        c_id
+      ])
+      .then(function (data) {
+        console.log("added to active_chats successfully");
+      })
+      // if query execution fails
+      // send error message
+      .catch(function (err) {
+        return console.log("failure to add to active_chats");
+      });
+});
 
 
 
