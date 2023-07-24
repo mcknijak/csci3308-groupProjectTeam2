@@ -11,3 +11,4 @@ INSERT INTO "User" ("First_name", "Last_name", "City", "State", "Country", "Emai
 INSERT INTO "Service" ("Name") VALUES ('Discord');
 INSERT INTO "Service" ("Name") VALUES ('Telegram');
 */
+INSERT INTO "Service" ("Name") VALUES ('Slack');
