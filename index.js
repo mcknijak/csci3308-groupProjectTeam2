@@ -86,15 +86,17 @@ app.post('/home', async (req, res) => {
     });
   } else {
     const query =
-      `INSERT INTO "User_service" ("User_id", "Service_id", api_key) VALUES ($1, $2, $3)`
+      `insert into "User_service" ("User_id", "Service_id", "api_key", "signing_key") values ($1, $2, $3)`
       const u_id = data[0].User_id;
       let s_id;
       const key = req.body.API_key;
       
-      if(req.body.connected_app == "telegram"){
+      if(req.body.connected_app == "slack"){
+        s_id = 6;
+      }else if(req.body.connected_app == "telegram"){
         s_id = 3;
       }else{
-        s_id = 2;
+        s_id =2;
       }
       db.any(query, [
         u_id,
