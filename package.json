@@ -3,6 +3,7 @@
   "main": "index.js",
   "dependencies": {
     "@slack/bolt": "^3.13.2",
+    "@cucumber/cucumber": "^9.3.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "1.20.0",
@@ -15,6 +16,7 @@
     "nodemon": "2.0.20",
     "pg-promise": "^10.11.1",
     "socket.io": "^4.7.1"
+    "selenium-webdriver": "^4.10.0"
   },
   "scripts": {
     "prestart": "npm install",
@@ -23,6 +25,6 @@
     "test": "mocha --exit --recursive ./tests/unit ./tests/integration",
     "testw": "mocha --exit --recursive ./tests/unit --watch ./modules/ ./tests/unit/",
     "testWithCoverage": "nyc npm run test",
-    "cuke": "cucumber-js --config config/cucumber.yaml"
+    "cuke": "cucumber-js --config All_project_code_components/config/cucumber.yaml"
   }
 }

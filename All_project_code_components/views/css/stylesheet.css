@@ -1,0 +1,20 @@
+/* Footer */
+.footer {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+}
+
+/* carousel on home page */
+#carousel-bottom-indicators /*this gives the text white background */{
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+  
+  .carousel-control-next,
+  .carousel-control-prev /*this makes the buttons black */ {
+      filter: invert(100%);
+  }
+  
+  #carousel-bottom-indicators{
+    color: black;
+  }
