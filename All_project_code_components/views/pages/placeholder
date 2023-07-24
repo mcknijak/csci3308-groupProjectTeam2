@@ -1,0 +1,27 @@
+<div class="modal fade" id="pop-up" aria-hidden="true" aria-labelledby="pu-title"><!--pu for popup -->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <h5 class="pu-title" id="pu-title"><center>Connect Chats</center></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+                <div class="modal-body">
+                    <form id="channel_form" action="/add_chat" method="POST">
+                        <select class="form-control" id="channel_name" required>
+                            <option value="null" default>Please choose</option>
+                            <% for(var i=0; i < chananels.length; i++) { %>
+                                <option value="<%= channels[i].name %>" >channels[i].name</option>
+                             <% } %>
+                        </select>
+                    </form>
+                    <div class="modal-footer">
+                    <button onclick="form_submit()" class="btn btn-primary mt-3">Submit</button>
+                    <script type="text/javascript">
+
+                        function form_submit() {
+                          document.getElementById("channel_form").submit();
+                         }    
+                        </script>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
